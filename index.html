@@ -27,34 +27,31 @@
 				<section>
 					<h2>Introduction to RxJS</h2>
 					<ul>
-						<li>RxJS is a Reactive Extension library for JavaScript, with variants available for multiple
-							languages (RxJava, RxSwift, RxPy)</li>
-						<li>It's a framework for reactivity in interfaces - enabling interfaces to automatically react
-							to events and data changes</li>
+						<li>RxJS is a library that brings Reactive Extensions to JavaScript. It also has versions for other languages, like RxJava, RxSwift, and RxPy.</li>
+						<li>RxJS provides a framework that helps interfaces automatically respond to events and data changes.</li>
 					</ul>
 				</section>
 				<section>
-					<h3>Key benefits</h3>
+					<h3>Main Advantages</h3>
 					<ul>
-						<li>declarative code</li>
-						<li>cancelable operations</li>
-						<li>excellent error handling</li>
+						<li>It uses declarative code, making programs easier to read and understand.</li>
+						<li>It supports cancelable operations, which helps manage resources better.</li>
+						<li>It provides excellent tools for handling errors gracefully.</li>
 					</ul>
 				</section>
 
 				<section>
-					<h3>Main purpose</h3>
-					<p>comfortable management of asynchronous operations and events in a reactive
-						programming style</p>
+					<h3>Main Purpose</h3>
+					<p>RxJS makes it comfortable to manage asynchronous operations and events using a reactive programming style.</p>
 				</section>
 			</section>
 
 			<section>
 				<section>
-					<h2>Main concept: everything is a stream</h2>
+					<h2>Main concept</h2>
+					<h3>everything is a stream</h3>
 					<p>To understand RxJS, you need to think in terms of streams rather than traditional JavaScript
 						operations</p>
-					<img src="stream.png" alt="stream">
 				</section>
 				<section>
 					<ul>
@@ -86,8 +83,8 @@
 				<section>
 					<h3>Versatility of RxJS Streams</h3>
 					<li>Stream sources can be anything: input events, clicks, arrays, promises</li>
-					<li>Streams provide a consistent interface for working with various asynchronous data</li>
-					<li>The pipe mechanism provides a standardized way to compose operations</li>
+					<li>In the process of the event moving from the source to the listener, various metamorphoses can occur with the event. This is done using the pipe() method.</li>
+					<li>You can imagine this as a pipe between the source and the listener, which contains different filters.</li>
 				</section>
 				<section>
 					<h3>Ways to Create Streams in RxJS</h3>
@@ -157,19 +154,29 @@
 
 			<section>
 				<section>
-					<h2>Commonly used RxJs operators in Angular:</h2>
+					<h2>Operators</h2>
+					<p>We use the pipe() method to apply operators to the data stream.</p>
+					<ul>
+					<li><strong>Change data</strong> - like map, scan, and buffer.</li>
+					<li><strong>Filter data</strong> - filter, take, skip, and distinct.</li>
+					<li><strong>Handle errors</strong> - catchError, retry, and onErrorResumeNext.</li>
+					<li><strong>For conditions</strong> - skipUntil, skipWhile, takeUntil, and takeWhile.</li>
+					<li><strong>Math operations</strong> - min, max, and count.</li>
+					</ul>
+					</section>
+				<section>
 					<h3>map</h3>
+					<p>Allows you to modify incoming messages and send them on.</p>
 					<pre><code class="language-ts">import { from, map } from 'rxjs';
 
 							const obs = from([1,2,3]).pipe(map(n => n * 2));
 							obs.subscribe(value => console.log(value));
 
-							// 2
-							// 4
-							// 6</code></pre>
+							// 2 4 6</code></pre>
 				</section>
 				<section>
 					<h3>filter</h3>
+					<p>Skips those values that satisfy the conditional function.</p>
 					<pre><code class="language-ts">import { from, filter } from 'rxjs';
 
 							const obs = from([1,2,3]).pipe(filter(n => n > 2));
@@ -181,26 +188,8 @@
 				</section>
 
 				<section>
-					<h3>interval</h3>
-					<pre><code class="language-ts">
-							const timerObservable = interval(1000);
-						
-							timerObservable.subscribe(value => {
-								console.log(`Прошла секунда: ${value}`);
-							  });
-
-							// Console output:
-							// A second has passed: 0
-							// A second has passed: 1
-							// A second has passed: 2
-							// A second has passed: 3
-							//... 
-							</code></pre>
-
-				</section>
-
-				<section>
 					<h3>take</h3>
+					<p>take(N)it will take a maximum of N values from the source and terminate.</p>
 					<pre><code class="language-ts">
 							import { interval } from 'rxjs';
 							import { take } from 'rxjs/operators';
@@ -209,12 +198,21 @@
 							.pipe(take(3))
 							.subscribe(value => console.log(value));
 							
-							// Console output:
-							// 0
-							// 1
-							// 2
+							// Console output: 0 1 2
 							</code></pre>
-
+				</section>
+				<section>
+					<h3>takeWhile</h3>
+					<p>takeWhile(predicate) it will take values as long as the condition is true.</p>
+					<pre><code class="language-ts">
+						import { interval } from "rxjs";
+						import { takeWhile } from "rxjs/operators";
+						interval(100).pipe(
+						  takeWhile(n => n < 5)
+						)
+						.subscribe(console.log);
+						// 0, 1, 2, 3, 4
+							</code></pre>
 				</section>
 
 				<section>
@@ -242,6 +240,20 @@
 						</pre>
 
 				</section>
+
+				<section>
+					<h3>delay</h3>
+					<p>The delay(N) operator causes a delay in the transmission of messages of N milliseconds and passes them on.</p>
+					<pre><code class="language-ts">
+						import { interval } from "rxjs";
+						import { takeWhile } from "rxjs/operators";
+						interval(100).pipe(
+						  takeWhile(n => n < 5)
+						)
+						.subscribe(console.log);
+						// 0, 1, 2, 3, 4
+							</code></pre>
+				</section>
 				
 			</section>
 			<section>
@@ -264,7 +276,7 @@
 						catchError(err => of([]))
 					  )
 					  .subscribe(data => this.items = data);</code></pre>
-					<p><em>Use <code>retry()</code> and <code>catchError()</code> to build robust streams.</em></p>
+					<p>Retry an observable sequence a specific number of times should an error occur.</p>
 				</section>
 			</section>
 			<section>
