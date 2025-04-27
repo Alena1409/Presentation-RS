@@ -20,15 +20,14 @@
 		<div class="slides">
 			<section>
 				<h1>RxJS</h1>
-				<p>Alekseeva Alena 2024Q4</p>
+				<p>Alekseeva Alena</p>
 			</section>
 
 			<section>
 				<section>
 					<h2>Introduction to RxJS</h2>
 					<ul>
-						<li>RxJS is a library that brings Reactive Extensions to JavaScript. It also has versions for
-							other languages, like RxJava, RxSwift, and RxPy.</li>
+						<li>RxJS is a library that brings Reactive Extensions to JavaScript.</li>
 						<li>RxJS provides a framework that helps interfaces automatically respond to events and data
 							changes.</li>
 					</ul>
@@ -80,13 +79,164 @@
 
 			<section>
 				<section>
-					<h3>Versatility of RxJS Streams</h3>
-					<li>Stream can be from arrays, events, or Promises.</li>
-					<li>You use the .pipe() method to work with the data.</li>
-					<li>It is like a pipeline — each step transforms the data.</li>
+					<h3>Basic idea of RXJS</h3>
+					<pre><code class="language-ts">const observable = new Observable(observer => {
+		observer.next(1); // is used to get the next event
+		observer.error('Something went wrong'); //  handle an error
+		observer.complete(); // is used when the events are finished
+});
+
+// Observable - a constructor of the event source.</code></pre>
+					<pre><code class="language-ts">const observer = {
+		next: val => console.log('Value:', val),
+		error: err => console.error('Error:', err),
+		complete: () => console.log('Done')
+					};
+
+//Observer listens to events. It starts events by subscribing
+</code></pre>
+					<pre><code class="language-ts">observable.pipe().subscribe(observer);
+
+// Subscription = connects the sourse and the observer
+// Pipe — a process of extending the event source constructor
+// Pipe uses operators. Operators are simple, clean functions</code></pre>
+				</section>
+
+				<section>
+					<pre>Example:<code class="language-ts">
+	const search$ = new Observable(observer => {
+		const search = document.getElementById('search');
+		if(!search) {
+			observer.error('Element does not exist on the page');
+			return;
+		}
+		search.addEventListener('input', event => {
+			observer.next(event);
+		});
+	});</code></pre>
+					<pre><code>
+		search$.pipe(
+			map(e => e.target.value),
+			debounceTime(500) // will cause a delay
+		).subscribe({
+			next: value => console.log(value),
+			error: err =>  console.log(err)
+		}); </code></pre>
+				</section>
+			
+			</section>
+
+			<section>
+				<section>
+                    <h3>Subject, BehaviorSubject, ReplySubject</h3>
+                    <p>These are special types of Observable. They can send events and listen at the same time.</p>
+
+					<ul>
+						<li><strong>Subject</strong> - sending button click events inside an application.</li>
+						<li><strong>BehaviorSubject</strong> - storing user state (like login status or user profile information).</li>
+						<li><strong>ReplaySubject</strong> - chat applications: a new user joins and sees the last 10 messages.</li>
+					</ul>
 				</section>
 				<section>
-					<h3>Ways to Create Streams in RxJS</h3>
+					<h4>Subject - Tracking Button Clicks</h4>
+					<pre><code class="language-ts">import { Subject } from 'rxjs';
+				
+				// Create Subject
+				const buttonClicks$ = new Subject&lt;string&gt;();
+				
+				// Subscriber
+				buttonClicks$.subscribe(click => {
+				  console.log('Button clicked:', click);
+				});
+				
+				// Somewhere in the app:
+				buttonClicks$.next('Button 1 clicked');
+				buttonClicks$.next('Button 2 clicked');</code></pre>
+					<p><strong>What happens:</strong></p>
+					<ul>
+					  <li><code>Subject</code> manually emits events (<code>next</code>).</li>
+					  <li>Subscribers only receive new clicks.</li>
+					  <li>Old clicks are not stored.</li>
+					</ul>
+				  </section>
+				
+				  <section>
+					<h4>BehaviorSubject - User State (Authentication)</h4>
+					<pre><code class="language-ts">import { BehaviorSubject } from 'rxjs';
+				
+	// Create BehaviorSubject with initial state
+	const userState$ = new BehaviorSubject&lt;string&gt;('logged out');
+				
+	// Subscriber immediately gets the latest state
+	userState$.subscribe(state => {
+	  console.log('User is', state);
+	});
+				
+	// Update the state
+	userState$.next('logged in');
+	userState$.next('profile updated');
+					</code></pre>
+					<p><strong>What happens:</strong></p>
+					<ul>
+					  <li>New subscribers instantly receive the current state.</li>
+					  <li>Even if they subscribe later.</li>
+					</ul>
+				  </section>
+				
+				  <section>
+					<h4>ReplaySubject - Chat Messages (History)</h4>
+					<pre><code class="language-ts">import { ReplaySubject } from 'rxjs';
+				
+				// Create ReplaySubject with buffer of 2
+				const chatMessages$ = new ReplaySubject&lt;string&gt;(2);
+				
+				// Emit old messages
+				chatMessages$.next('Hi!');
+				chatMessages$.next('How are you?');
+				chatMessages$.next('What’s up?');
+				
+				// New subscriber
+				chatMessages$.subscribe(message => {
+				  console.log('New user sees:', message);
+				});</code></pre>
+					<p><strong>What happens:</strong></p>
+					<ul>
+					  <li><code>ReplaySubject</code> stores the last 2 messages.</li>
+					  <li>New subscribers immediately receive them.</li>
+					</ul>
+				  </section>
+				<section>
+					<h4>Summary Table</h4>
+					<table>
+						<thead>
+							<tr>
+								<th>Type</th>
+								<th>New subscriber receives</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Subject</td>
+								<td>Only new events</td>
+							</tr>
+							<tr>
+								<td>BehaviorSubject</td>
+								<td>Last event + new events</td>
+							</tr>
+							<tr>
+								<td>ReplaySubject</td>
+								<td>Multiple previous events + new events</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+			</section>
+
+			
+
+			<section>
+				<section>
+					<h3>Versatility of RxJS Streams</h3>
 					<ul>
 						<li>
 							<p>from() — creates a stream from an array, string, Promise, or iterable object</p>
@@ -131,24 +281,6 @@
 
 					</ul>
 				</section>
-			</section>
-			<section>
-				<p>new Observable() — creating a stream manually with full control over its behavior</p>
-				<pre><code class="language-ts">const observable = new Observable(subscriber => {
-				  subscriber.next(1);
-				  subscriber.error(err);
-				  subscriber.complete();
-				});
-				//Observable = source of data</code></pre>
-				<pre><code class="language-ts">const observer = {
-				  next: val => console.log('Value:', val),
-				  error: err => console.error('Error:', err),
-				  complete: () => console.log('Done')
-				};
-				//Observer = data handler</code></pre>
-				<pre><code class="language-ts">observable.subscribe(observer);
-					//Subscription = connects them
-				</code></pre>
 			</section>
 
 			<section>
@@ -258,29 +390,31 @@
 			</section>
 			<section>
 				<section>
-					<h2>Real-world use case</h2>
 					<pre><code class="language-ts">this.searchControl.valueChanges
 					.pipe(
 					debounceTime(300),
 					switchMap(query => this.http.get('/api?query=' + query))
 					 )
 					.subscribe(result => this.data = result);</code></pre>
-					<p><em>Connect input to API call. Reactive and clean!</em></p>
+					<ul>
+					<li>Connect input to API call.</li>
+					<li>First, we wait 300ms after typing.</li>
+					<li>Then we call the server.</li>
+					<li>The result updates the pageReactive and clean.</li>
+					</ul>
 				</section>
 
 				<section>
-					<h2>Error handling and retry</h2>
 					<pre><code class="language-ts">this.http.get('/api/data')
 					  .pipe(
 						retry(2),
 						catchError(err => of([]))
 					  )
 					  .subscribe(data => this.items = data);</code></pre>
-					<p>Retry an observable sequence a specific number of times should an error occur.</p>
+					<ul><li>Retry an observable sequence a specific number of times should an error occur.</li></ul>
 				</section>
 			</section>
 			<section>
-				<pre>Installation<code class="language-ts">npm i rxjs</code></pre>
 				<p>Interesting links</p>
 				<ul>
 					<li>
