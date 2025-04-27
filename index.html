@@ -403,16 +403,6 @@
 					<li>The result updates the pageReactive and clean.</li>
 					</ul>
 				</section>
-
-				<section>
-					<pre><code class="language-ts">this.http.get('/api/data')
-					  .pipe(
-						retry(2),
-						catchError(err => of([]))
-					  )
-					  .subscribe(data => this.items = data);</code></pre>
-					<ul><li>Retry an observable sequence a specific number of times should an error occur.</li></ul>
-				</section>
 			</section>
 			<section>
 				<p>Interesting links</p>
