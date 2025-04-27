@@ -117,18 +117,20 @@
 			error: err =>  console.log(err)
 		}); </code></pre>
 				</section>
-			
+
 			</section>
 
 			<section>
 				<section>
-                    <h3>Subject, BehaviorSubject, ReplySubject</h3>
-                    <p>These are special types of Observable. They can send events and listen at the same time.</p>
+					<h3>Subject, BehaviorSubject, ReplySubject</h3>
+					<p>These are special types of Observable. They can send events and listen at the same time.</p>
 
 					<ul>
 						<li><strong>Subject</strong> - sending button click events inside an application.</li>
-						<li><strong>BehaviorSubject</strong> - storing user state (like login status or user profile information).</li>
-						<li><strong>ReplaySubject</strong> - chat applications: a new user joins and sees the last 10 messages.</li>
+						<li><strong>BehaviorSubject</strong> - storing user state (like login status or user profile
+							information).</li>
+						<li><strong>ReplaySubject</strong> - chat applications: a new user joins and sees the last 10
+							messages.</li>
 					</ul>
 				</section>
 				<section>
@@ -148,13 +150,13 @@
 				buttonClicks$.next('Button 2 clicked');</code></pre>
 					<p><strong>What happens:</strong></p>
 					<ul>
-					  <li><code>Subject</code> manually emits events (<code>next</code>).</li>
-					  <li>Subscribers only receive new clicks.</li>
-					  <li>Old clicks are not stored.</li>
+						<li><code>Subject</code> manually emits events (<code>next</code>).</li>
+						<li>Subscribers only receive new clicks.</li>
+						<li>Old clicks are not stored.</li>
 					</ul>
-				  </section>
-				
-				  <section>
+				</section>
+
+				<section>
 					<h4>BehaviorSubject - User State (Authentication)</h4>
 					<pre><code class="language-ts">import { BehaviorSubject } from 'rxjs';
 				
@@ -172,12 +174,12 @@
 					</code></pre>
 					<p><strong>What happens:</strong></p>
 					<ul>
-					  <li>New subscribers instantly receive the current state.</li>
-					  <li>Even if they subscribe later.</li>
+						<li>New subscribers instantly receive the current state.</li>
+						<li>Even if they subscribe later.</li>
 					</ul>
-				  </section>
-				
-				  <section>
+				</section>
+
+				<section>
 					<h4>ReplaySubject - Chat Messages (History)</h4>
 					<pre><code class="language-ts">import { ReplaySubject } from 'rxjs';
 				
@@ -195,10 +197,10 @@
 				});</code></pre>
 					<p><strong>What happens:</strong></p>
 					<ul>
-					  <li><code>ReplaySubject</code> stores the last 2 messages.</li>
-					  <li>New subscribers immediately receive them.</li>
+						<li><code>ReplaySubject</code> stores the last 2 messages.</li>
+						<li>New subscribers immediately receive them.</li>
 					</ul>
-				  </section>
+				</section>
 				<section>
 					<h4>Summary Table</h4>
 					<table>
@@ -226,7 +228,7 @@
 				</section>
 			</section>
 
-			
+
 
 			<section>
 				<section>
@@ -380,6 +382,35 @@
 						// 0, 1, 2, 3, 4
 							</code></pre>
 				</section>
+			</section>
+
+			<section>
+				<section>
+					<pre><code class="language-ts">this.searchControl.valueChanges
+						.pipe(
+						debounceTime(300),
+						switchMap(query => this.http.get('/api?query=' + query))
+						 )
+						.subscribe(result => this.data = result);</code></pre>
+					<ul>
+						<li>Connect input to API call.</li>
+						<li>First, we wait 300ms after typing.</li>
+						<li>Then we call the server.</li>
+						<li>The result updates the pageReactive and clean.</li>
+					</ul>
+				</section>
+				<section>
+					<pre><code class="language-ts">this.http.get('/api/data')
+						  .pipe(
+							retry(2),
+							catchError(err => of([]))
+						  )
+						  .subscribe(data => this.items = data);</code></pre>
+					<ul>
+						<li>Retry an observable sequence a specific number of times should an error occur.</li>
+					</ul>
+				</section>
+			</section>
 			<section>
 				<p>Interesting links</p>
 				<ul>
